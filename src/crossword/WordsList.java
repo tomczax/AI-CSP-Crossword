@@ -7,14 +7,18 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class WordsList {
-	public List<String> wordsList = new ArrayList<String>();
-//	public List<String> sortedWordsList = new ArrayList<String>();
+//	public static List<String> wordsList = new ArrayList<String>();
+	public static HashSet<String> wordsList = new HashSet<String>();
 	static int size;
-
-	public WordsList() {
+	
+	static {
+		readWordsFromFile();
+	}
+	public static void readWordsFromFile() {
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader("lemma.al"));
 			String line;
@@ -27,7 +31,6 @@ public class WordsList {
 				}
 			}
 			 size = wordsList.size();
-//			sortedWordsList = wordsList;
 			reader.close();
 		} catch (FileNotFoundException e) {
 			System.out.println(e);
@@ -38,10 +41,10 @@ public class WordsList {
 		}
 	}
 
-	public static void main(String [] args) {
-		WordsList l = new WordsList();
-		System.out.println(l.size);
-		System.out.println(l.wordsList);
-	}
+//	public static void main(String [] args) {
+//		WordsList.readWordsFromFile();
+////		System.out.println(WordsList.size);
+//		System.out.println(WordsList.wordsList);
+//	}
 	
 }

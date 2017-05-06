@@ -5,25 +5,23 @@ import java.util.Collections;
 
 //Represents Variable in the CSP problem.
 public class Word {
-	// There are two directions in a crossword. HORIZONTAL and VERTICAL.
-
 	// The value of the variable
 	private String word;
 	private int firstLetterRow;
 	private int firstLetterColumn;
 	/*
-	 * Score for current variable(word) value - UNSIGNED
+	 * Score for current variable(word) value
 	 */
 	private int score;
 	/*
-	 * Direction is randomly selected by Crossword_board class.
+	 * Direction is randomly selected by Board class.
 	 */
 	private int direction;
 	/*
 	 * Class of all four constraints(beginning, end, path, side)
 	 */
 	private Constraint constraint;
-	// Class contains string and points for this particular string.
+	// Class contains string and score for this particular string.
 	ArrayList<Domain> domain;
 
 	public Word() {
@@ -32,7 +30,7 @@ public class Word {
 	}
 	
 	public int getLength() { return this.word.length(); }
-//	public int getPosition() { return this.firstLetterPosition; }
+	public int[] getPosition() { return new int[]{this.firstLetterRow, this.firstLetterColumn}; }
 	public String getWord() { return this.word; }
 	public int getDirection() { return this.direction; }
 	public int getScore() { return this.score; }

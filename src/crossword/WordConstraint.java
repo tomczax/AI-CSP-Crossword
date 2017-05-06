@@ -9,7 +9,7 @@ public class WordConstraint {
 		this.letter = letter;
 	}
 
-	boolean checkConstraint(String word) {
+	public boolean checkConstraint(String word) {
 		if (word.length() <= this.positionInWord)
 			return false;
 		if (word.charAt(this.positionInWord) != this.letter)
