@@ -7,37 +7,45 @@ public class Board {
 	 * occupation map contains all letters that were inserted into board. It
 	 * allows to create constraints for new words.
 	 */
-	private char[][] occupationMap;
-	private int width;
-	private int height;
-	
+	private static char[][] occupationMap;
+	private static int width;
+	private static int height;
 
-	public Board(int width, int height) {
-		this.width = width;
-		this.height = height;
-		this.occupationMap = new char[height][width];
+	public Board(int w, int h) {
+		width = w;
+		height = h;
+		occupationMap = new char[height][width];
 		for (int r = 0; r < height; r++) {
 			for (int c = 0; c < width; c++)
-				this.occupationMap[r][c] = Constants.DEFAULT_EMPTY_CELL;
+				occupationMap[r][c] = Constants.DEFAULT_EMPTY_CELL;
 		}
 	}
+	
+//	public Board() {
+//		width = Constants.WIDTH;
+//		height = Constants.HEIGHT;
+//		for (int r = 0; r < height; r++) {
+//			for (int c = 0; c < width; c++)
+//				occupationMap[r][c] = Constants.DEFAULT_EMPTY_CELL;
+//		}
+//	}
 
-	public int getWidth() {
-		return this.width;
+	public static int getWidth() {
+		return width;
 	}
 
-	public int getHeight() {
-		return this.height;
+	public static int getHeight() {
+		return height;
 	}
 
-	public char[][] getOccupationMap() {
-		return this.occupationMap;
+	public static char[][] getOccupationMap() {
+		return occupationMap;
 	}
 
-	public void clearOccupationMap() {
+	public static void clearOccupationMap() {
 		for (int r = 0; r < height; r++) {
 			for (int c = 0; c < width; c++)
-				this.occupationMap[r][c] = Constants.DEFAULT_EMPTY_CELL;
+				occupationMap[r][c] = Constants.DEFAULT_EMPTY_CELL;
 		}
 	}
 
@@ -49,27 +57,27 @@ public class Board {
 	 * </pre> \param position word first letter position on the board in letters
 	 * unit. \return distance_to_border distance in letter units.
 	 */
-	private int getDistanceFromBorder(int firstLetterRow, int firstLetterColumn, int direction) {
+	private static int getDistanceFromBorder(int firstLetterRow, int firstLetterColumn, int direction) {
 		if (direction == Constants.HORIZONTAL)
-			return this.width - firstLetterColumn;
+			return width - firstLetterColumn;
 		else
-			return this.height - firstLetterRow;
+			return height - firstLetterRow;
 	}
 
-	public int selectWordStartingPointAndDirection(int firstLetterRow, int firstLetterColumn, int direction) {
+	public static int selectWordStartingPointAndDirection(int firstLetterRow, int firstLetterColumn, int direction) {
 		int distanceFromBorder;
 
-		do {
-			firstLetterColumn = ThreadLocalRandom.current().nextInt(0, this.width);
-			firstLetterRow = ThreadLocalRandom.current().nextInt(0, this.height);
-			direction = ThreadLocalRandom.current().nextInt(0, 2);
+//		do {
+//			firstLetterColumn = ThreadLocalRandom.current().nextInt(0, width);
+//			firstLetterRow = ThreadLocalRandom.current().nextInt(0, height);
+//			direction = ThreadLocalRandom.current().nextInt(0, 2);
 
 			distanceFromBorder = getDistanceFromBorder(firstLetterRow, firstLetterColumn, direction);
-		} while (Constants.SHORTEST_WORD_LENGTH > distanceFromBorder);
+//		} while (Constants.SHORTEST_WORD_LENGTH > distanceFromBorder);
 		return distanceFromBorder;
 	}
 
-	public int selectWordLength(int distanceFromBorder) {
+	public static int selectWordLength(int distanceFromBorder) {
 		int wordLength = 0;
 
 		if (Constants.SHORTEST_WORD_LENGTH < distanceFromBorder)
@@ -84,36 +92,32 @@ public class Board {
 		return wordLength;
 	}
 
-	public void insertWordIntoOccupationMap(String wordToInsert, int firstLetterRow, int firstLetterColumn,
+	public static void insertWordIntoOccupationMap(String wordToInsert, int firstLetterRow, int firstLetterColumn,
 			int direction) {
 		if (direction == Constants.VERTICAL) {
 			for (int i = 0; i < wordToInsert.length(); i++) {
-				this.occupationMap[firstLetterRow][firstLetterColumn] = wordToInsert.charAt(i);
+				occupationMap[firstLetterRow][firstLetterColumn] = wordToInsert.charAt(i);
 				firstLetterRow++;
 			}
 		} else {
 			for (int i = 0; i < wordToInsert.length(); i++) {
-				this.occupationMap[firstLetterRow][firstLetterColumn] = wordToInsert.charAt(i);
+				occupationMap[firstLetterRow][firstLetterColumn] = wordToInsert.charAt(i);
 				firstLetterColumn++;
 			}
 		}
 	}
 
-	public void displayOccupationMap() {
+	public static void displayOccupationMap() {
 		for (int r = 0; r < height; r++) {
 			for (int c = 0; c < width; c++) {
-				System.out.print(this.occupationMap[r][c]);
-			} System.out.println();
+				System.out.print(occupationMap[r][c]);
+			}
+			System.out.println();
 		}
 	}
-
-//	 public static void main(String[] args) {
-//		 Board b = new Board(6, 5);
-//		 b.displayOccupationMap();
-//		 b.insertWordIntoOccupationMap("karo", 1, 2, 1);
-//		 b.displayOccupationMap();
-//		 b.clearOccupationMap();
-//		 b.displayOccupationMap();
-//	
-//	 }
+	
+	public static void main(String [] args) {
+		Board b = new Board(10, 10);
+		b.displayOccupationMap();
+	}
 }

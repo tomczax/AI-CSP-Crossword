@@ -49,11 +49,15 @@ public class Constraint {
 							occupationMap[letterIndex][firstLetterColumn]));
 				} else {
 					String text = "";
+					int c;
 					// left side
-					int c = firstLetterColumn - 1;
-					while (occupationMap[letterIndex][c] != Constants.DEFAULT_EMPTY_CELL) {
-						text += occupationMap[letterIndex][c];
-						c--;
+					if (firstLetterColumn != 0) {
+						c = firstLetterColumn - 1;
+						while (occupationMap[letterIndex][c] != Constants.DEFAULT_EMPTY_CELL) {
+							text += occupationMap[letterIndex][c];
+							c--;
+						}
+
 					}
 					if (!text.equals("")) {
 						text = reverseString(text);
@@ -62,10 +66,12 @@ public class Constraint {
 						text = "";
 					}
 					// right side
-					c = firstLetterColumn + 1;
-					while (occupationMap[letterIndex][c] != Constants.DEFAULT_EMPTY_CELL) {
-						text += occupationMap[letterIndex][c];
-						c++;
+					if (firstLetterColumn != Board.getWidth() - 1) {
+						c = firstLetterColumn + 1;
+						while (occupationMap[letterIndex][c] != Constants.DEFAULT_EMPTY_CELL) {
+							text += occupationMap[letterIndex][c];
+							c++;
+						}
 					}
 					if (!text.equals("")) {
 						this.wordSideConstraints
@@ -83,11 +89,14 @@ public class Constraint {
 							occupationMap[firstLetterRow][letterIndex]));
 				} else {
 					String text = "";
+					int c;
 					// up - above the word
-					int c = firstLetterRow - 1;
-					while (occupationMap[c][letterIndex] != Constants.DEFAULT_EMPTY_CELL) {
-						text += occupationMap[c][letterIndex];
-						c--;
+					if (firstLetterRow != 0) {
+						c = firstLetterRow - 1;
+						while (occupationMap[c][letterIndex] != Constants.DEFAULT_EMPTY_CELL) {
+							text += occupationMap[c][letterIndex];
+							c--;
+						}
 					}
 					if (!text.equals("")) {
 						text = reverseString(text);
@@ -96,10 +105,12 @@ public class Constraint {
 						text = "";
 					}
 					// down - under the word
-					c = firstLetterRow + 1;
-					while (occupationMap[c][letterIndex] != Constants.DEFAULT_EMPTY_CELL) {
-						text += occupationMap[c][letterIndex];
-						c++;
+					if (firstLetterRow != Board.getHeight() - 1) {
+						c = firstLetterRow + 1;
+						while (occupationMap[c][letterIndex] != Constants.DEFAULT_EMPTY_CELL) {
+							text += occupationMap[c][letterIndex];
+							c++;
+						}
 					}
 					if (!text.equals("")) {
 						this.wordSideConstraints
@@ -110,10 +121,10 @@ public class Constraint {
 
 			}
 		}
-		 System.out.println("word constraints: ");
-		 for(int i = 0; i < wordConstraints.size(); i++) {
-		 System.out.println("[ " + wordConstraints.get(i).positionInWord + "]: " + wordConstraints.get(i).letter);
-		 }
+		System.out.println("word constraints: ");
+		for (int i = 0; i < wordConstraints.size(); i++) {
+			System.out.println("[ " + wordConstraints.get(i).positionInWord + "]: " + wordConstraints.get(i).letter);
+		}
 		return wordConstraints;
 	}
 
@@ -171,39 +182,43 @@ public class Constraint {
 	public int getEndConstraintLength() {
 		return this.endConstraint.text.length();
 	}
+
 	public int checkBeginningConstraint(String wordToInsert) {
 		return this.beginningConstraint.checkConstraint(wordToInsert);
 	}
+
 	public int checkEndConstraint(String wordToInsert) {
 		return this.endConstraint.checkConstraint(wordToInsert);
 	}
+
 	// iterate through the path constraints for the variable
 	public boolean checkPathConstraint(String wordToInsert) {
-		for(WordConstraint c : this.pathConstraints) {
-			if(c.checkConstraint(wordToInsert) == false) {
+		for (WordConstraint c : this.pathConstraints) {
+			if (c.checkConstraint(wordToInsert) == false) {
 				return false;
 			}
 		}
 		return true;
 	}
+
 	public ArrayList<WordConstraint> getPathConstraints() {
 		return this.pathConstraints;
 	}
 
-//	 public static void main(String[] args) {
-//	
-//	 Board b = new Board(5, 8);
-//	 b.insertWordIntoOccupationMap("ali", 1, 1, 1);
-//	 b.displayOccupationMap();
-//	 Constraint c = new Constraint();
-//	 c.createConstraint(2, 1, 1, 6, b.getOccupationMap(), b.getWidth(),
-//	 b.getHeight());
-////	 c.createConstraint(0, 1, 1, 3, b.getOccupationMap(), b.getWidth(),
-////	 b.getHeight());
-//	 System.out.println("end onstraints: ");
-//	 System.out.println("[" + c.endConstraint.text + "]");
-//	 System.out.println("start onstraints: ");
-//	 System.out.println("[" + c.beginningConstraint.text + "]");
-//
-//	 }
+	// public static void main(String[] args) {
+	//
+	// Board b = new Board(5, 8);
+	// b.insertWordIntoOccupationMap("ali", 1, 1, 1);
+	// b.displayOccupationMap();
+	// Constraint c = new Constraint();
+	// c.createConstraint(2, 1, 1, 6, b.getOccupationMap(), b.getWidth(),
+	// b.getHeight());
+	//// c.createConstraint(0, 1, 1, 3, b.getOccupationMap(), b.getWidth(),
+	//// b.getHeight());
+	// System.out.println("end onstraints: ");
+	// System.out.println("[" + c.endConstraint.text + "]");
+	// System.out.println("start onstraints: ");
+	// System.out.println("[" + c.beginningConstraint.text + "]");
+	//
+	// }
 }

@@ -7,32 +7,119 @@ public class Data {
 	/*
 	 * Variable from CSP definition. Could be represented by single string, but
 	 * this solution includes constraint kept inside Variable. Number of
-	 * variables depends on constant defined in constant.hpp file
 	 */
-	private HashSet<Word> variables;
-	// Describes board, its size and selects position, direction and word size
-	// for variable.
-	private Board board;
-	/*	Contains all words loaded from dictionary from lemma.al file
-	 *	Domains for variables are created based on this set.
+	// Array list, bo chce zeby byla kolejnosc dodania
+	private static ArrayList<Word> variables = new ArrayList<Word>();
+
+	public static ArrayList<Word> getVariables() {
+		return variables;
+	}
+
+	public static void addWordToDictionaryWord(String word) {
+		dictionaryWords.add(word);
+	}
+
+	public static void unsetVariable() {
+		variables.remove(variables.size() - 1);
+	}
+
+	// // Describes board, its size and selects position, direction and word
+	// size
+	// // for variable.
+	// private Board board;
+	/*
+	 * Contains all words loaded from dictionary from lemma.al file Domains for
+	 * variables are created based on this set.
 	 */
-	HashSet<String> dictionaryWords = getWordsListFromFile() ;
-	private HashSet<String> getWordsListFromFile() {
+	public static HashSet<String> dictionaryWords = getWordsListFromFile();
+
+	private static HashSet<String> getWordsListFromFile() {
 		WordsList.readWordsFromFile();
 		return WordsList.wordsList;
 	}
-	/*
-	 * Selects set of words from that satisfy given constraints. Selection is
-	 * done from dictionary set.
-	 */
-	private HashSet<String> getWordsSatisfyingConstraint(Constraint constraint, int wordLength) {
-		HashSet<String> wordsList = new HashSet<String>();
-		for (String w : this.dictionaryWords) {
+
+	public static void removeFromDictionaryWords(String word) {
+		dictionaryWords.remove(word);
+	}
+
+	public static HashSet<String> getWordsSatisfyingConstraint(Constraint constraint, int wordLength) {
+		HashSet<String> satisfying = new HashSet<String>();
+		// sprawdz czy nie zmienia si ekolejnosc i sie nie psuje wyszukiwanie
+		for (String w : dictionaryWords) {
 			if (checkConstraint(constraint, w, wordLength)) {
-				wordsList.add(w);
+				satisfying.add(w);
 			}
 		}
-		return wordsList;
+		return satisfying;
+	}
+
+	public static boolean selectUnassignedVariable() {
+		if (variables.size() < Constants.NUMBER_OF_WORDS_TO_INSERT) {
+			variables.add(new Word());
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+
+	public static void insertWord(String word) {
+		Word lastVariable = variables.get(variables.size() - 1);
+		int beginningConstraintLength = lastVariable.getBegginingConstraintLength();
+		int endConstraintLength = lastVariable.getEndConstraintLength();
+		int wordLengthWithoutConstraints = word.length() - beginningConstraintLength - endConstraintLength;
+
+		// Only part of the word has to be inserted if there are beginning or
+		// end constraint. It means that for e.g. there is line D I S s o l V E
+		// where D I S is word_beginning constraint and V E is
+		// word_end_constraint. Only s o l has to be inserted, because the rest
+		// is already on the board.
+		// word_to_insert = dissolve, therefore we look for sol. wbc_length = 3
+		// word_length_without_constraints = 3 ( length of 's o l').
+		String wordWithoutConstraints = word.substring(beginningConstraintLength,
+				beginningConstraintLength + wordLengthWithoutConstraints);
+		Board.insertWordIntoOccupationMap(wordWithoutConstraints, lastVariable.getPosition()[0],
+				lastVariable.getPosition()[0], lastVariable.getDirection());
+
+		// Variable is equal to the whole word: dissolve.
+		lastVariable.assignWord(word);
+	}
+
+	public static void fillOccupationMap() {
+		Board.clearOccupationMap();
+		int beginningConstraintLength;
+		int endConstraintLength;
+		int wordLengthWithoutConstraints;
+		String wordWithoutConstraints = null;
+		for (Word v : variables) {
+			beginningConstraintLength = v.getBegginingConstraintLength();
+			endConstraintLength = v.getEndConstraintLength();
+			wordLengthWithoutConstraints = v.getWord().length() - beginningConstraintLength - endConstraintLength;
+			wordWithoutConstraints = v.getWord().substring(beginningConstraintLength,
+					beginningConstraintLength + wordLengthWithoutConstraints);
+			Board.insertWordIntoOccupationMap(wordWithoutConstraints, v.getPosition()[0], v.getPosition()[1],
+					v.getDirection());
+		}
+	}
+
+	public static void displayVariables() {
+		for (Word w : variables) {
+			System.out.println(w.getWord());
+		}
+	}
+
+	/*
+	 * Removes all strings from the list that cannot be found in dictionary.
+	 * is_this_in_dictionary() function is used to search for words. \param
+	 * vector with set of strings \return vector with set of words
+	 */
+	public static HashSet<String> removeNotFoundWords(HashSet<String> domain) {
+		for (String s : domain) {
+			if (!isInDictionary(s)) {
+				domain.remove(s);
+			}
+		}
+		return domain;
 	}
 
 	/*
@@ -41,7 +128,7 @@ public class Data {
 	 * length on the board. \param word for which constraints have to be
 	 * checked. \param word length (without beginning and end constraint length)
 	 */
-	public boolean checkConstraint(Constraint constraint, String wordToInsert, int wordLength) {
+	public static boolean checkConstraint(Constraint constraint, String wordToInsert, int wordLength) {
 		int beginningLength;
 		if ((beginningLength = constraint.checkBeginningConstraint(wordToInsert)) == -1) {
 			return false;
@@ -66,36 +153,36 @@ public class Data {
 
 		for (int i = 0; i < wordSideConstraints.size(); i++) {
 			sideConstraints.get(wordSideConstraints.get(i).positionInWord)
-					.add(new SideConstraint(wordSideConstraints.get(i).side, i));		
+					.add(new SideConstraint(wordSideConstraints.get(i).side, i));
 		}
-		for(int i = 0; i < sideConstraints.size(); i++) {
+		for (int i = 0; i < sideConstraints.size(); i++) {
 			String createdWord = "";
-			//VERTICAL
-			//both sides 
-			if(sideConstraints.get(i).size() == 2) {
-				if(sideConstraints.get(i).get(0).type == Constants.LEFT) {
+			// VERTICAL
+			// both sides
+			if (sideConstraints.get(i).size() == 2) {
+				if (sideConstraints.get(i).get(0).type == Constants.LEFT) {
 					createdWord += wordSideConstraints.get(sideConstraints.get(i).get(0).id).text;
-					createdWord += wordToInsert.charAt(i+beginningLength);
+					createdWord += wordToInsert.charAt(i + beginningLength);
 					createdWord += wordSideConstraints.get(sideConstraints.get(i).get(1).id).text;
 				} else {
 					createdWord += wordSideConstraints.get(sideConstraints.get(i).get(1).id).text;
-					createdWord += wordToInsert.charAt(i+beginningLength);
+					createdWord += wordToInsert.charAt(i + beginningLength);
 					createdWord += wordSideConstraints.get(sideConstraints.get(i).get(0).id).text;
 				}
-				//isInDictionary == false 
-				if(!isInDictionary(createdWord)) {
+				// isInDictionary == false
+				if (!isInDictionary(createdWord)) {
 					return false;
 				}
-			// one side
-			} else if( sideConstraints.get(i).size() == 1) {
-				if(sideConstraints.get(i).get(0).type == Constants.LEFT) {
+				// one side
+			} else if (sideConstraints.get(i).size() == 1) {
+				if (sideConstraints.get(i).get(0).type == Constants.LEFT) {
 					createdWord += wordSideConstraints.get(sideConstraints.get(i).get(0).id).text;
-					createdWord += wordToInsert.charAt(i+beginningLength);
+					createdWord += wordToInsert.charAt(i + beginningLength);
 				} else {
-					createdWord += wordToInsert.charAt(i+beginningLength);
+					createdWord += wordToInsert.charAt(i + beginningLength);
 					createdWord += wordSideConstraints.get(sideConstraints.get(i).get(0).id).text;
 				}
-				if(!isInDictionary(createdWord)) {
+				if (!isInDictionary(createdWord)) {
 					return false;
 				}
 			}
@@ -103,8 +190,8 @@ public class Data {
 		return true;
 	}
 
-	private boolean isInDictionary(String word) {
-		if( this.dictionaryWords.contains(word)) {
+	private static boolean isInDictionary(String word) {
+		if (dictionaryWords.contains(word)) {
 			return true;
 		} else {
 			return false;

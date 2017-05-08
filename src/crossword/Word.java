@@ -20,9 +20,9 @@ public class Word {
 	/*
 	 * Class of all four constraints(beginning, end, path, side)
 	 */
-	private Constraint constraint;
+	private Constraint constraint = new Constraint();
 	// Class contains string and score for this particular string.
-	ArrayList<Domain> domain;
+	ArrayList<Domain> domain = new ArrayList<Domain>();
 
 	public Word() {
 		this.direction = 0;

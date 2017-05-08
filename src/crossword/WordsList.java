@@ -6,14 +6,10 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 public class WordsList {
-//	public static List<String> wordsList = new ArrayList<String>();
 	public static HashSet<String> wordsList = new HashSet<String>();
-	static int size;
 	
 	static {
 		readWordsFromFile();
@@ -30,7 +26,6 @@ public class WordsList {
 					wordsList.add(words[2]);
 				}
 			}
-			 size = wordsList.size();
 			reader.close();
 		} catch (FileNotFoundException e) {
 			System.out.println(e);
@@ -40,11 +35,4 @@ public class WordsList {
 			System.out.println("The file cannot be read");
 		}
 	}
-
-//	public static void main(String [] args) {
-//		WordsList.readWordsFromFile();
-////		System.out.println(WordsList.size);
-//		System.out.println(WordsList.wordsList);
-//	}
-	
 }
