@@ -40,7 +40,7 @@ public class Constraint {
 		ArrayList<WordConstraint> wordConstraints = new ArrayList<WordConstraint>();
 
 		if (direction == Constants.VERTICAL) {
-			for (int letterIndex = firstLetterRow; letterIndex < (firstLetterRow + wordLength); letterIndex++) {
+			for (int letterIndex = firstLetterRow; letterIndex < wordLength; letterIndex++) {
 				// path (word) constraint -> (position, letter)
 				if (occupationMap[letterIndex][firstLetterColumn] != Constants.DEFAULT_EMPTY_CELL) {
 					// position of letter in the word is letterIndex -
@@ -82,7 +82,7 @@ public class Constraint {
 
 			}
 		} else {
-			for (int letterIndex = firstLetterColumn; letterIndex < (firstLetterColumn + wordLength); letterIndex++) {
+			for (int letterIndex = firstLetterColumn; letterIndex < wordLength; letterIndex++) {
 				// path (word) constraint -> (position, letter)
 				if (occupationMap[firstLetterRow][letterIndex] != Constants.DEFAULT_EMPTY_CELL) {
 					wordConstraints.add(new WordConstraint(letterIndex - firstLetterColumn,
@@ -133,17 +133,23 @@ public class Constraint {
 		WordBeginningConstraint wordBeginningConstraint = new WordBeginningConstraint();
 		wordBeginningConstraint.text = "";
 		if (direction == Constants.VERTICAL) {
-			for (int i = firstLetterRow - 1; i >= 0
-					&& occupationMap[i][firstLetterColumn] != Constants.DEFAULT_EMPTY_CELL; i--) {
-				wordBeginningConstraint.text += occupationMap[i][firstLetterColumn];
+			if (!(firstLetterRow == 0)) {
+				for (int i = firstLetterRow - 1; i >= 0
+						&& occupationMap[i][firstLetterColumn] != Constants.DEFAULT_EMPTY_CELL; i--) {
+					wordBeginningConstraint.text += occupationMap[i][firstLetterColumn];
+
+				}
+				wordBeginningConstraint.text = reverseString(wordBeginningConstraint.text);
+
 			}
-			wordBeginningConstraint.text = reverseString(wordBeginningConstraint.text);
 		} else {
-			for (int i = firstLetterColumn - 1; i >= 0
-					&& occupationMap[firstLetterRow][i] != Constants.DEFAULT_EMPTY_CELL; i--) {
-				wordBeginningConstraint.text += occupationMap[firstLetterRow][i];
+			if (!(firstLetterColumn == 0)) {
+				for (int i = firstLetterColumn - 1; i >= 0
+						&& occupationMap[firstLetterRow][i] != Constants.DEFAULT_EMPTY_CELL; i--) {
+					wordBeginningConstraint.text += occupationMap[firstLetterRow][i];
+				}
+				wordBeginningConstraint.text = reverseString(wordBeginningConstraint.text);
 			}
-			wordBeginningConstraint.text = reverseString(wordBeginningConstraint.text);
 		}
 		return wordBeginningConstraint;
 	}
@@ -153,15 +159,20 @@ public class Constraint {
 		WordEndConstraint wordEndConstraint = new WordEndConstraint();
 		wordEndConstraint.text = "";
 		if (direction == Constants.VERTICAL) {
-			for (int i = firstLetterRow + wordLength; i < height
-					&& occupationMap[i][firstLetterColumn] != Constants.DEFAULT_EMPTY_CELL; i++) {
+			if (!(firstLetterRow == height - 1)) {
+				for (int i = firstLetterRow + wordLength; i < height
+						&& occupationMap[i][firstLetterColumn] != Constants.DEFAULT_EMPTY_CELL; i++) {
 
-				wordEndConstraint.text += occupationMap[i][firstLetterColumn];
+					wordEndConstraint.text += occupationMap[i][firstLetterColumn];
+				}
 			}
+
 		} else {
-			for (int i = firstLetterColumn + wordLength; i < width
-					&& occupationMap[firstLetterRow][i] != Constants.DEFAULT_EMPTY_CELL; i++) {
-				wordEndConstraint.text += occupationMap[firstLetterRow][i];
+			if (!(firstLetterColumn == width - 1)) {
+				for (int i = firstLetterColumn + wordLength; i < width
+						&& occupationMap[firstLetterRow][i] != Constants.DEFAULT_EMPTY_CELL; i++) {
+					wordEndConstraint.text += occupationMap[firstLetterRow][i];
+				}
 			}
 		}
 		return wordEndConstraint;

@@ -79,7 +79,7 @@ public class Data {
 		String wordWithoutConstraints = word.substring(beginningConstraintLength,
 				beginningConstraintLength + wordLengthWithoutConstraints);
 		Board.insertWordIntoOccupationMap(wordWithoutConstraints, lastVariable.getPosition()[0],
-				lastVariable.getPosition()[0], lastVariable.getDirection());
+				lastVariable.getPosition()[1], lastVariable.getDirection());
 
 		// Variable is equal to the whole word: dissolve.
 		lastVariable.assignWord(word);
@@ -129,6 +129,9 @@ public class Data {
 	 * checked. \param word length (without beginning and end constraint length)
 	 */
 	public static boolean checkConstraint(Constraint constraint, String wordToInsert, int wordLength) {
+//		if(wordLength != wordToInsert.length()) {
+//			return false;
+//		}
 		int beginningLength;
 		if ((beginningLength = constraint.checkBeginningConstraint(wordToInsert)) == -1) {
 			return false;

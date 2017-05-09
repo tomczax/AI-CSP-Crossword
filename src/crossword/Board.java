@@ -57,39 +57,45 @@ public class Board {
 	 * </pre> \param position word first letter position on the board in letters
 	 * unit. \return distance_to_border distance in letter units.
 	 */
-	private static int getDistanceFromBorder(int firstLetterRow, int firstLetterColumn, int direction) {
+	public static int getDistanceFromBorder(int firstLetterRow, int firstLetterColumn, int direction) {
 		if (direction == Constants.HORIZONTAL)
 			return width - firstLetterColumn;
 		else
 			return height - firstLetterRow;
 	}
 
-	public static int selectWordStartingPointAndDirection(int firstLetterRow, int firstLetterColumn, int direction) {
-		int distanceFromBorder;
-
-//		do {
+//	public static int selectWordStartingPointAndDirection(int firstLetterRow, int firstLetterColumn, int direction) {
+//		int distanceFromBorder = getDistanceFromBorder(firstLetterRow, firstLetterColumn, direction);;
+//
+//		while( distanceFromBorder < Constants.SHORTEST_WORD_LENGTH)
 //			firstLetterColumn = ThreadLocalRandom.current().nextInt(0, width);
 //			firstLetterRow = ThreadLocalRandom.current().nextInt(0, height);
 //			direction = ThreadLocalRandom.current().nextInt(0, 2);
-
-			distanceFromBorder = getDistanceFromBorder(firstLetterRow, firstLetterColumn, direction);
-//		} while (Constants.SHORTEST_WORD_LENGTH > distanceFromBorder);
-		return distanceFromBorder;
-	}
+//
+//			distanceFromBorder = getDistanceFromBorder(firstLetterRow, firstLetterColumn, direction);
+//		return distanceFromBorder;
+//	}
 
 	public static int selectWordLength(int distanceFromBorder) {
-		int wordLength = 0;
-
-		if (Constants.SHORTEST_WORD_LENGTH < distanceFromBorder)
-			do {
-				wordLength = ThreadLocalRandom.current().nextInt(0,
-						(distanceFromBorder - Constants.SHORTEST_WORD_LENGTH + 1)) + Constants.SHORTEST_WORD_LENGTH;
-			} while (wordLength >= Constants.NUMBER_OF_RANDOM_LETTERS_IN_SET);
-		else if (Constants.SHORTEST_WORD_LENGTH == distanceFromBorder)
-			wordLength = Constants.SHORTEST_WORD_LENGTH;
-		else
-			System.out.println("Error. distance_to_border is smaller than SHORTEST_WORD_LENGTH");
-		return wordLength;
+		if( distanceFromBorder < Constants.SHORTEST_WORD_LENGTH) {
+			return 0;
+		} else if( distanceFromBorder == Constants.SHORTEST_WORD_LENGTH  ) { 
+			return Constants.SHORTEST_WORD_LENGTH;
+		} else {
+			return ThreadLocalRandom.current().nextInt(Constants.SHORTEST_WORD_LENGTH, distanceFromBorder + 1);
+		}
+//		int wordLength = 0;
+//
+//		if (Constants.SHORTEST_WORD_LENGTH < distanceFromBorder)
+//			do {
+//				wordLength = ThreadLocalRandom.current().nextInt(0,
+//						(distanceFromBorder - Constants.SHORTEST_WORD_LENGTH + 1)) + Constants.SHORTEST_WORD_LENGTH;
+//			} while (wordLength >= Constants.NUMBER_OF_RANDOM_LETTERS_IN_SET);
+//		else if (Constants.SHORTEST_WORD_LENGTH == distanceFromBorder)
+//			wordLength = Constants.SHORTEST_WORD_LENGTH;
+//		else
+//			System.out.println("Error. distance_to_border is smaller than SHORTEST_WORD_LENGTH");
+//		return wordLength;
 	}
 
 	public static void insertWordIntoOccupationMap(String wordToInsert, int firstLetterRow, int firstLetterColumn,
