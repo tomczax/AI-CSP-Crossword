@@ -7,46 +7,35 @@ public class Board {
 	 * occupation map contains all letters that were inserted into board. It
 	 * allows to create constraints for new words.
 	 */
-	private static char[][] occupationMap;
-	private static int width;
-	private static int height;
+	private static char[][] board;
 
-	public Board(int w, int h) {
-		width = w;
-		height = h;
-		occupationMap = new char[height][width];
-		for (int r = 0; r < height; r++) {
-			for (int c = 0; c < width; c++)
-				occupationMap[r][c] = Constants.DEFAULT_EMPTY_CELL;
+	public Board() {
+		board = new char[Constants.HEIGHT][Constants.WIDTH];
+		for (int r = 0; r < Constants.HEIGHT; r++) {
+			for (int c = 0; c < Constants.WIDTH; c++)
+				board[r][c] = Constants.DEFAULT_EMPTY_CELL;
 		}
 	}
-	
-//	public Board() {
-//		width = Constants.WIDTH;
-//		height = Constants.HEIGHT;
-//		for (int r = 0; r < height; r++) {
-//			for (int c = 0; c < width; c++)
-//				occupationMap[r][c] = Constants.DEFAULT_EMPTY_CELL;
-//		}
-//	}
 
-	public static int getWidth() {
-		return width;
-	}
-
-	public static int getHeight() {
-		return height;
-	}
-
-	public static char[][] getOccupationMap() {
-		return occupationMap;
+	public static char[][] getBoard() {
+		return board;
 	}
 
 	public static void clearOccupationMap() {
-		for (int r = 0; r < height; r++) {
-			for (int c = 0; c < width; c++)
-				occupationMap[r][c] = Constants.DEFAULT_EMPTY_CELL;
+		for (int r = 0; r < Constants.HEIGHT; r++) {
+			for (int c = 0; c < Constants.WIDTH; c++)
+				board[r][c] = Constants.DEFAULT_EMPTY_CELL;
 		}
+	}
+	
+	public static int[] findPosition() {
+		for (int r = 0; r < Constants.HEIGHT; r++) {
+			for (int c = 0; c < Constants.WIDTH; c++)
+				if(board[r][c] == Constants.DEFAULT_EMPTY_CELL) {
+					return new int[] {r, c};
+				};
+		}
+		return new int[] {-1, -1};
 	}
 
 	/*
@@ -57,67 +46,68 @@ public class Board {
 	 * </pre> \param position word first letter position on the board in letters
 	 * unit. \return distance_to_border distance in letter units.
 	 */
-	private static int getDistanceFromBorder(int firstLetterRow, int firstLetterColumn, int direction) {
+	public static int getDistanceFromBorder(int firstLetterRow, int firstLetterColumn, int direction) {
 		if (direction == Constants.HORIZONTAL)
-			return width - firstLetterColumn;
+			return Constants.WIDTH - firstLetterColumn;
 		else
-			return height - firstLetterRow;
+			return Constants.HEIGHT - firstLetterRow;
 	}
 
-	public static int selectWordStartingPointAndDirection(int firstLetterRow, int firstLetterColumn, int direction) {
-		int distanceFromBorder;
-
-//		do {
+//	public static int selectWordStartingPointAndDirection(int firstLetterRow, int firstLetterColumn, int direction) {
+//		int distanceFromBorder = getDistanceFromBorder(firstLetterRow, firstLetterColumn, direction);;
+//
+//		while( distanceFromBorder < Constants.SHORTEST_WORD_LENGTH)
 //			firstLetterColumn = ThreadLocalRandom.current().nextInt(0, width);
 //			firstLetterRow = ThreadLocalRandom.current().nextInt(0, height);
 //			direction = ThreadLocalRandom.current().nextInt(0, 2);
-
-			distanceFromBorder = getDistanceFromBorder(firstLetterRow, firstLetterColumn, direction);
-//		} while (Constants.SHORTEST_WORD_LENGTH > distanceFromBorder);
-		return distanceFromBorder;
-	}
+//
+//			distanceFromBorder = getDistanceFromBorder(firstLetterRow, firstLetterColumn, direction);
+//		return distanceFromBorder;
+//	}
 
 	public static int selectWordLength(int distanceFromBorder) {
-		int wordLength = 0;
-
-		if (Constants.SHORTEST_WORD_LENGTH < distanceFromBorder)
-			do {
-				wordLength = ThreadLocalRandom.current().nextInt(0,
-						(distanceFromBorder - Constants.SHORTEST_WORD_LENGTH + 1)) + Constants.SHORTEST_WORD_LENGTH;
-			} while (wordLength >= Constants.NUMBER_OF_RANDOM_LETTERS_IN_SET);
-		else if (Constants.SHORTEST_WORD_LENGTH == distanceFromBorder)
-			wordLength = Constants.SHORTEST_WORD_LENGTH;
-		else
-			System.out.println("Error. distance_to_border is smaller than SHORTEST_WORD_LENGTH");
-		return wordLength;
+		if( distanceFromBorder < Constants.SHORTEST_WORD_LENGTH) {
+			return 0;
+		} else if( distanceFromBorder == Constants.SHORTEST_WORD_LENGTH  ) { 
+			return Constants.SHORTEST_WORD_LENGTH;
+		} else {
+			return ThreadLocalRandom.current().nextInt(Constants.SHORTEST_WORD_LENGTH, distanceFromBorder + 1);
+		}
+//		int wordLength = 0;
+//
+//		if (Constants.SHORTEST_WORD_LENGTH < distanceFromBorder)
+//			do {
+//				wordLength = ThreadLocalRandom.current().nextInt(0,
+//						(distanceFromBorder - Constants.SHORTEST_WORD_LENGTH + 1)) + Constants.SHORTEST_WORD_LENGTH;
+//			} while (wordLength >= Constants.NUMBER_OF_RANDOM_LETTERS_IN_SET);
+//		else if (Constants.SHORTEST_WORD_LENGTH == distanceFromBorder)
+//			wordLength = Constants.SHORTEST_WORD_LENGTH;
+//		else
+//			System.out.println("Error. distance_to_border is smaller than SHORTEST_WORD_LENGTH");
+//		return wordLength;
 	}
 
 	public static void insertWordIntoOccupationMap(String wordToInsert, int firstLetterRow, int firstLetterColumn,
 			int direction) {
 		if (direction == Constants.VERTICAL) {
 			for (int i = 0; i < wordToInsert.length(); i++) {
-				occupationMap[firstLetterRow][firstLetterColumn] = wordToInsert.charAt(i);
+				board[firstLetterRow][firstLetterColumn] = wordToInsert.charAt(i);
 				firstLetterRow++;
 			}
 		} else {
 			for (int i = 0; i < wordToInsert.length(); i++) {
-				occupationMap[firstLetterRow][firstLetterColumn] = wordToInsert.charAt(i);
+				board[firstLetterRow][firstLetterColumn] = wordToInsert.charAt(i);
 				firstLetterColumn++;
 			}
 		}
 	}
 
-	public static void displayOccupationMap() {
-		for (int r = 0; r < height; r++) {
-			for (int c = 0; c < width; c++) {
-				System.out.print(occupationMap[r][c]);
+	public static void displayBoard() {
+		for (int r = 0; r < Constants.HEIGHT; r++) {
+			for (int c = 0; c < Constants.WIDTH; c++) {
+				System.out.print(board[r][c]);
 			}
 			System.out.println();
 		}
-	}
-	
-	public static void main(String [] args) {
-		Board b = new Board(10, 10);
-		b.displayOccupationMap();
 	}
 }

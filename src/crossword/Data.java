@@ -9,9 +9,9 @@ public class Data {
 	 * this solution includes constraint kept inside Variable. Number of
 	 */
 	// Array list, bo chce zeby byla kolejnosc dodania
-	private static ArrayList<Word> variables = new ArrayList<Word>();
+	private static ArrayList<Variable> variables = new ArrayList<Variable>();
 
-	public static ArrayList<Word> getVariables() {
+	public static ArrayList<Variable> getVariables() {
 		return variables;
 	}
 
@@ -55,7 +55,7 @@ public class Data {
 
 	public static boolean selectUnassignedVariable() {
 		if (variables.size() < Constants.NUMBER_OF_WORDS_TO_INSERT) {
-			variables.add(new Word());
+			variables.add(new Variable());
 			return true;
 		} else {
 			return false;
@@ -64,7 +64,7 @@ public class Data {
 	}
 
 	public static void insertWord(String word) {
-		Word lastVariable = variables.get(variables.size() - 1);
+		Variable lastVariable = variables.get(variables.size() - 1);
 		int beginningConstraintLength = lastVariable.getBegginingConstraintLength();
 		int endConstraintLength = lastVariable.getEndConstraintLength();
 		int wordLengthWithoutConstraints = word.length() - beginningConstraintLength - endConstraintLength;
@@ -79,7 +79,7 @@ public class Data {
 		String wordWithoutConstraints = word.substring(beginningConstraintLength,
 				beginningConstraintLength + wordLengthWithoutConstraints);
 		Board.insertWordIntoOccupationMap(wordWithoutConstraints, lastVariable.getPosition()[0],
-				lastVariable.getPosition()[0], lastVariable.getDirection());
+				lastVariable.getPosition()[1], lastVariable.getDirection());
 
 		// Variable is equal to the whole word: dissolve.
 		lastVariable.assignWord(word);
@@ -91,7 +91,7 @@ public class Data {
 		int endConstraintLength;
 		int wordLengthWithoutConstraints;
 		String wordWithoutConstraints = null;
-		for (Word v : variables) {
+		for (Variable v : variables) {
 			beginningConstraintLength = v.getBegginingConstraintLength();
 			endConstraintLength = v.getEndConstraintLength();
 			wordLengthWithoutConstraints = v.getWord().length() - beginningConstraintLength - endConstraintLength;
@@ -103,7 +103,7 @@ public class Data {
 	}
 
 	public static void displayVariables() {
-		for (Word w : variables) {
+		for (Variable w : variables) {
 			System.out.println(w.getWord());
 		}
 	}
@@ -129,6 +129,9 @@ public class Data {
 	 * checked. \param word length (without beginning and end constraint length)
 	 */
 	public static boolean checkConstraint(Constraint constraint, String wordToInsert, int wordLength) {
+//		if(wordLength != wordToInsert.length()) {
+//			return false;
+//		}
 		int beginningLength;
 		if ((beginningLength = constraint.checkBeginningConstraint(wordToInsert)) == -1) {
 			return false;

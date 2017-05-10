@@ -11,20 +11,20 @@ public class Constants {
 	/*	When randomly choosing word_length, condition will be checked,
 	 *	so that no word shorter than this variable will be selected.
 	 */
-	public static final int SHORTEST_WORD_LENGTH = 3;
+	public static final int SHORTEST_WORD_LENGTH = 2;
 	/*  Defines how many letters there are in a set when creating word.
 	 * 	With combinations of those letters word has to be created plus
 	 * 	letters on the board can be used
 	 */
-	public static final int NUMBER_OF_RANDOM_LETTERS_IN_SET = 20;
+//	public static final int NUMBER_OF_RANDOM_LETTERS_IN_SET = 20;
 	/*	Describes maximal number of the position selection repetition
 	 *	for single Variable when the deeper recursion has no way to go
 	 *	due to empty domain = too strong constraint.
 	 */
-	public static final int MAX_VARIABLE_POSITION_SELECTION_NUMBER = 20;
+	public static final int MAX_VARIABLE_POSITION_SELECTION_NUMBER = 3;
 	/* How many words should be inserted into the crossword */
-	public static final int NUMBER_OF_WORDS_TO_INSERT = 2;
-	public static final int HEIGHT = 5;
-	public static final int WIDTH =6;
+	public static final int NUMBER_OF_WORDS_TO_INSERT = 4;
+	public static final int HEIGHT = 10;
+	public static final int WIDTH = 10;
 	
 }
