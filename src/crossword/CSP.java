@@ -1,6 +1,5 @@
 package crossword;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -17,24 +16,30 @@ public class CSP {
 		int wordLength = 0;		
 		String word;
 		int random;
-		for(int i=0; i < Constants.MAX_VARIABLE_POSITION_SELECTION_NUMBER; i++) {
-			firstLetterRow = ThreadLocalRandom.current().nextInt(0, Board.getHeight());
-			firstLetterColumn = ThreadLocalRandom.current().nextInt(0, Board.getWidth());
+//		for(int i=0; i < Constants.MAX_VARIABLE_POSITION_SELECTION_NUMBER; i++) {
+			if( Board.findPosition()[0] == -1 || Board.findPosition()[1] == -1 ) {
+				System.out.println(" no more empty spaces");
+				return false;
+			}
+			firstLetterRow = Board.findPosition()[0];
+			firstLetterColumn = Board.findPosition()[1];
+//			firstLetterRow = ThreadLocalRandom.current().nextInt(0, Constants.HEIGHT);
+//			firstLetterColumn = ThreadLocalRandom.current().nextInt(0, Constants.WIDTH);
 			direction = ThreadLocalRandom.current().nextInt(0, 2);
 			distanceFromBorder = Board.getDistanceFromBorder(firstLetterRow, firstLetterColumn, direction);
-			while( distanceFromBorder < Constants.SHORTEST_WORD_LENGTH){
-				firstLetterColumn = ThreadLocalRandom.current().nextInt(0, Constants.WIDTH);
-				firstLetterRow = ThreadLocalRandom.current().nextInt(0, Constants.HEIGHT);
-				direction = ThreadLocalRandom.current().nextInt(0, 2);
-
-				distanceFromBorder = Board.getDistanceFromBorder(firstLetterRow, firstLetterColumn, direction);
-			}
+//			while( distanceFromBorder < Constants.SHORTEST_WORD_LENGTH){
+//				firstLetterColumn = ThreadLocalRandom.current().nextInt(0, Constants.WIDTH);
+//				firstLetterRow = ThreadLocalRandom.current().nextInt(0, Constants.HEIGHT);
+//				direction = ThreadLocalRandom.current().nextInt(0, 2);
+//
+//				distanceFromBorder = Board.getDistanceFromBorder(firstLetterRow, firstLetterColumn, direction);
+//			}
 			wordLength = Board.selectWordLength(distanceFromBorder);
 			System.out.println(firstLetterRow + "  " + firstLetterColumn + "  " + direction + "  " + wordLength );
-			Word lastVariable = Data.getVariables().get(Data.getVariables().size()-1);
+			Variable lastVariable = Data.getVariables().get(Data.getVariables().size()-1);
 			lastVariable.setPosition(firstLetterRow, firstLetterColumn);
 			lastVariable.setDirection(direction);
-			lastVariable.createConstraint(wordLength, Board.getOccupationMap(), Constants.WIDTH, Constants.HEIGHT);
+			lastVariable.createConstraint(wordLength, Board.getBoard());
 			HashSet<String> domain = new HashSet<String>(WordsList.wordsList);
 			System.out.println(domain.size());
 			String[] domainArray;
@@ -48,7 +53,7 @@ public class CSP {
 					Data.insertWord(word);
 					Data.removeFromDictionaryWords(word);
 					System.out.println(word);
-					Board.displayOccupationMap();
+					Board.displayBoard();
 					
 					if(recursiveBactracking()) {
 						return true;
@@ -58,24 +63,37 @@ public class CSP {
 					Data.addWordToDictionaryWord(word);
 				}
 				domain.remove(word);
-//				System.out.println(domain);
 			}
 			Data.fillOccupationMap();
-		}
+//		}
 		Data.unsetVariable();
 		return false;
 		
 	}
 	
 	public static void main(String[] args) {
-		new Board(Constants.WIDTH, Constants.HEIGHT);
-
-		if(CSP.recursiveBactracking() == false) {
+		new Board();
+		
+		  if(CSP.recursiveBactracking() == false) {
+		 
 			System.out.println("no sultion");
 		}
-		Board.displayOccupationMap();
+		System.out.println("FINAL BOARD: ");
+		Board.displayBoard();
 
-		System.out.println("Variables:");
-		Data.displayVariables();
+//		System.out.println("Variables:");
+//		Data.displayVariables();
+//		 Board b = new Board();
+//		 Board.insertWordIntoOccupationMap("mess", 0, 0, 0);
+////		 Board.insertWordIntoOccupationMap("karolina", 4, 0, 0);	 
+//		 Board.displayBoard();
+//		 Constraint c = new Constraint();
+//		 c.createConstraint(0, 4, 1, 6, Board.getBoard());
+////		 c.createConstraint(0, 1, 1, 3, Board.getBoard());
+//		 System.out.println("end onstraints: ");
+//		 System.out.println("[" + c.endConstraint.text + "]");
+//		 System.out.println("start onstraints: ");
+//		 System.out.println("[" + c.beginningConstraint.text + "]");
+//		
 	}
 }

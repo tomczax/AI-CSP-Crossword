@@ -12,17 +12,16 @@ public class Constraint {
 	 * - - -
 	 */
 	public ArrayList<WordSideConstraint> wordSideConstraints = new ArrayList<WordSideConstraint>();
-	private WordBeginningConstraint beginningConstraint = new WordBeginningConstraint();
-	private WordEndConstraint endConstraint = new WordEndConstraint();
-	private ArrayList<WordConstraint> pathConstraints;
+	public WordBeginningConstraint beginningConstraint = new WordBeginningConstraint();
+	public WordEndConstraint endConstraint = new WordEndConstraint();
+	public ArrayList<WordConstraint> pathConstraints;
 
 	public void createConstraint(int firstLetterRow, int firstLetterColumn, int direction, int wordLength,
-			char[][] occupationMap, int width, int height) {
+			char[][] occupationMap) {
 		beginningConstraint = createBeginningConstraint(firstLetterRow, firstLetterColumn, direction, occupationMap);
-		endConstraint = createEndConstraint(firstLetterRow, firstLetterColumn, direction, wordLength, occupationMap,
-				width, height);
+		endConstraint = createEndConstraint(firstLetterRow, firstLetterColumn, direction, wordLength, occupationMap);
 		pathConstraints = createPathAndSideConstraints(firstLetterRow, firstLetterColumn, wordLength, direction,
-				occupationMap, width, height);
+				occupationMap);
 
 	}
 
@@ -34,13 +33,13 @@ public class Constraint {
 	 * - - -
 	 */
 	private ArrayList<WordConstraint> createPathAndSideConstraints(int firstLetterRow, int firstLetterColumn,
-			int wordLength, int direction, char[][] occupationMap, int width, int height) {
+			int wordLength, int direction, char[][] occupationMap) {
 
 		this.wordSideConstraints.clear();
 		ArrayList<WordConstraint> wordConstraints = new ArrayList<WordConstraint>();
 
 		if (direction == Constants.VERTICAL) {
-			for (int letterIndex = firstLetterRow; letterIndex < wordLength; letterIndex++) {
+			for (int letterIndex = firstLetterRow; letterIndex < firstLetterRow + wordLength; letterIndex++) {
 				// path (word) constraint -> (position, letter)
 				if (occupationMap[letterIndex][firstLetterColumn] != Constants.DEFAULT_EMPTY_CELL) {
 					// position of letter in the word is letterIndex -
@@ -52,10 +51,11 @@ public class Constraint {
 					int c;
 					// left side
 					if (firstLetterColumn != 0) {
-						c = firstLetterColumn - 1;
+						c = firstLetterColumn;
 						while (occupationMap[letterIndex][c] != Constants.DEFAULT_EMPTY_CELL) {
-							text += occupationMap[letterIndex][c];
 							c--;
+							text += occupationMap[letterIndex][c];
+							
 						}
 
 					}
@@ -66,7 +66,7 @@ public class Constraint {
 						text = "";
 					}
 					// right side
-					if (firstLetterColumn != Board.getWidth() - 1) {
+					if (firstLetterColumn != Constants.WIDTH - 1) {
 						c = firstLetterColumn + 1;
 						while (occupationMap[letterIndex][c] != Constants.DEFAULT_EMPTY_CELL) {
 							text += occupationMap[letterIndex][c];
@@ -82,7 +82,7 @@ public class Constraint {
 
 			}
 		} else {
-			for (int letterIndex = firstLetterColumn; letterIndex < wordLength; letterIndex++) {
+			for (int letterIndex = firstLetterColumn; letterIndex < firstLetterColumn + wordLength; letterIndex++) {
 				// path (word) constraint -> (position, letter)
 				if (occupationMap[firstLetterRow][letterIndex] != Constants.DEFAULT_EMPTY_CELL) {
 					wordConstraints.add(new WordConstraint(letterIndex - firstLetterColumn,
@@ -105,7 +105,7 @@ public class Constraint {
 						text = "";
 					}
 					// down - under the word
-					if (firstLetterRow != Board.getHeight() - 1) {
+					if (firstLetterRow != Constants.HEIGHT - 1) {
 						c = firstLetterRow + 1;
 						while (occupationMap[c][letterIndex] != Constants.DEFAULT_EMPTY_CELL) {
 							text += occupationMap[c][letterIndex];
@@ -155,12 +155,12 @@ public class Constraint {
 	}
 
 	private WordEndConstraint createEndConstraint(int firstLetterRow, int firstLetterColumn, int direction,
-			int wordLength, char[][] occupationMap, int width, int height) {
+			int wordLength, char[][] occupationMap) {
 		WordEndConstraint wordEndConstraint = new WordEndConstraint();
 		wordEndConstraint.text = "";
 		if (direction == Constants.VERTICAL) {
-			if (!(firstLetterRow == height - 1)) {
-				for (int i = firstLetterRow + wordLength; i < height
+			if (!(firstLetterRow == Constants.HEIGHT - 1)) {
+				for (int i = firstLetterRow + wordLength; i < Constants.HEIGHT
 						&& occupationMap[i][firstLetterColumn] != Constants.DEFAULT_EMPTY_CELL; i++) {
 
 					wordEndConstraint.text += occupationMap[i][firstLetterColumn];
@@ -168,14 +168,14 @@ public class Constraint {
 			}
 
 		} else {
-			if (!(firstLetterColumn == width - 1)) {
-				for (int i = firstLetterColumn + wordLength; i < width
+			if (!(firstLetterColumn == Constants.WIDTH - 1)) {
+				for (int i = firstLetterColumn + wordLength; i < Constants.WIDTH
 						&& occupationMap[firstLetterRow][i] != Constants.DEFAULT_EMPTY_CELL; i++) {
 					wordEndConstraint.text += occupationMap[firstLetterRow][i];
 				}
 			}
 		}
-		return wordEndConstraint;
+ 		return wordEndConstraint;
 	}
 
 	private static String reverseString(String s) {
